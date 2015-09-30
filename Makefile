@@ -8,7 +8,7 @@ SRCFILE=main.c calc.c stack.c formula.c
 EXEFILE=calc
 
 default: calc.c stack.c formula.c
-	$(CC) $(CFLAGS) $(LINK) $(SRCFILE) -o $(EXEFILE)
+	$(CC) $(CFLAGS) $(SRCFILE) -o $(EXEFILE) $(LINK)
 
 clean:
 	rm -f *.o
