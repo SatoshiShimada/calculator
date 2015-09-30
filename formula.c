@@ -33,34 +33,18 @@ int append_formula(int type, int data)
 
 int get_formula(int *data)
 {
-	struct t_formula *p, *q;
+	struct t_formula *p;
 	int ret;
 	if(start_formula == NULL) return -1;
-#if 0
-// for LastInFirstOut (LIFO)
-	for(p = start_formula; p->next != NULL; p = p->next) q = p;
-	*data = p->data;
-	ret = (int)p->type;
-	free(p);
-	if(start_formula == end_formula) {
-		start_formula = end_formula = NULL;
-	} else {
-		end_formula = q;
-		end_formula->next = NULL;
-	}
-// for LastInFirstOut (LIFO)
-#else
-// for FirstInFirstOut (FIFO)
-	q = start_formula->next;
+// FirstInFirstOut (FIFO)
+	p = start_formula->next;
 	*data = start_formula->data;
 	ret = start_formula->type;
 	free(start_formula);
-	start_formula = q;
+	start_formula = p;
 	if(start_formula == NULL) {
 		end_formula = NULL;
 	}
-// for FirstInFirstOut (FIFO)
-#endif
 	return ret;
 }
 

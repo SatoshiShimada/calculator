@@ -67,7 +67,6 @@ int get_next_token(char *src, int *val)
 	int ret;
 	static int index;
 	char c;
-	char *p = src;
 
 	c = src[index];
 	index++;
@@ -75,12 +74,12 @@ int get_next_token(char *src, int *val)
 		index = 0;
 		return 0;
 	}
-	switch(token_type[c]) {
+	switch(token_type[(int)c]) {
 	case NUMBER:
 		value = 0;
 		value = c - '0';
 		for(src += index; *src != '\0'; src++, index++) {
-			if(token_type[*src] != NUMBER) {
+			if(token_type[(int)*src] != NUMBER) {
 				break;
 			}
 			value = value * 10 + (*src - '0');
@@ -196,16 +195,12 @@ int order(int ch)
 
 int to_RPN(char *src) {
 	char buf0[1024];
-	char *str, *str_start;
-	int i;
 	int top;
 	int type;
 	int value;
-	char c;
 
 	init_stack();
 
-	str_start = buf0;
 	strncpy(buf0, src, sizeof(buf0));
 	for( ;; ) {
 		type = get_next_token(buf0, &value);
@@ -252,12 +247,12 @@ int to_RPN(char *src) {
 	}
 end_of_formula:
 
-	while(!pop(&i)) {
-		if(i == '(') {
+	while(!pop(&top)) {
+		if(top == '(') {
 			fprintf(stderr, "Invalid syntax\n");
 			return -1;
 		}
-		append_operator(i);
+		append_operator(top);
 	}
 
 	term_stack();
