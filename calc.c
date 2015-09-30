@@ -376,7 +376,7 @@ int calc(void)
 	init_token_type();
 	printf("> ");
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
-	to_RPN(buf);
+	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
 	printf("%0lf\n", ret);
 
