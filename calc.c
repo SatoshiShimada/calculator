@@ -2,10 +2,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "calc.h"
 #include "stack.h"
 #include "formula.h"
+
+#ifndef M_PI
+#define M_PI 3.141592653589793
+#endif
+
+enum func_num {
+	VALUE = 0,
+	SIN = 1,
+	COS,
+	TAN,
+} FUNC_NUM;
 
 typedef enum {
 	UNSET = 0,
@@ -21,13 +33,6 @@ typedef enum {
 } Token_type;
 
 char token_type[sizeof(char)];
-
-int main(int argc, char *argv[])
-{
-	while(!calc()) ;
-
-	return 0;
-}
 
 int input_formula(char *formula_str, int str_size)
 {
@@ -61,13 +66,32 @@ int input_formula(char *formula_str, int str_size)
 	return 0;
 }
 
+int symbol_to_value(char *str)
+{
+	int ret;
+
+	if(!strcmp(str, "quit")) {
+		exit(0);
+	} else if(!strcmp(str, "sin")) {
+		ret = 1 << SIN;
+	} else if(!strcmp(str, "cos")) {
+		ret = 1 << COS;
+	} else if(!strcmp(str, "tan")) {
+		ret = 1 << TAN;
+	}
+	return ret;
+}
+
 int get_next_token(char *src, int *val)
 {
-	int value;
-	int ret;
 	static int index;
 	char c;
+	char buf[1024];
+	int value, ret, i;
+	static int f_func = 0;
 
+	buf[0] = '\0';
+	i = 0;
 	c = src[index];
 	index++;
 	if(c == '\0') {
@@ -84,6 +108,21 @@ int get_next_token(char *src, int *val)
 			}
 			value = value * 10 + (*src - '0');
 		}
+		if(f_func != 0) {
+			switch(f_func) {
+			case (1 << SIN):
+				// degree to radian
+				value = (int)sin((double)(value * M_PI / 180.0));
+				break;
+			case (1 << COS):
+				value = (int)cos((double)(value * M_PI / 180.0));
+				break;
+			case (1 << TAN):
+				value = (int)tan((double)(value * M_PI / 180.0));
+				break;
+			}
+			f_func = VALUE; // flag clear
+		}
 		ret = 1; // NUMBER
 		break;
 	case OPERATOR:
@@ -93,6 +132,17 @@ int get_next_token(char *src, int *val)
 	case SPLIT:
 		value = c;
 		ret = 3; // SPLIT
+		break;
+	case SYMBOL:
+		for( ; *src != '\0'; src++, index++) {
+			if(token_type[(int)*src] != SYMBOL) {
+				break;
+			}
+			buf[i++] = *src;
+		}
+		buf[i] = '\0';
+		f_func = symbol_to_value(buf);
+		ret = 4;
 		break;
 	default:
 		fprintf(stderr, "Unknown charactor [%c]\n", c);
@@ -240,6 +290,8 @@ int to_RPN(char *src) {
 			end_loop:
 				push(value);
 			}
+			break;
+		case 4:
 			break;
 		default:
 			break;
