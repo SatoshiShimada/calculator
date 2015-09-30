@@ -6,14 +6,14 @@ struct t_formula {
 		OPERATOR = 0,
 		VALUE
 	} type;
-	int data;
+	double data;
 	struct t_formula *next;
 };
 
 struct t_formula *start_formula = NULL;
 struct t_formula *end_formula = NULL;
 
-int append_formula(int type, int data)
+int append_formula(int type, double data)
 {
 	struct t_formula *p;
 	p = (struct t_formula *)malloc(sizeof(struct t_formula));
@@ -31,7 +31,7 @@ int append_formula(int type, int data)
 	return 0;
 }
 
-int get_formula(int *data)
+int get_formula(double *data)
 {
 	struct t_formula *p;
 	int ret;

@@ -17,6 +17,7 @@ enum func_num {
 	SIN = 1,
 	COS,
 	TAN,
+	UNKNOWN = 100,
 } FUNC_NUM;
 
 typedef enum {
@@ -32,7 +33,7 @@ typedef enum {
 	SPLIT,
 } Token_type;
 
-char token_type[sizeof(char)];
+char token_type[0xff];
 
 int input_formula(char *formula_str, int str_size)
 {
@@ -78,16 +79,20 @@ int symbol_to_value(char *str)
 		ret = COS;
 	} else if(!strcmp(str, "tan")) {
 		ret = TAN;
+	} else {
+		ret = UNKNOWN;
 	}
+
 	return ret;
 }
 
-int get_next_token(char *src, int *val)
+int get_next_token(char *src, int *val, double *d_val)
 {
 	static int index;
 	char c;
 	char buf[1024];
 	int value, ret, i;
+	double d_value;
 	static int f_func = 0;
 
 	buf[0] = '\0';
@@ -100,25 +105,29 @@ int get_next_token(char *src, int *val)
 	}
 	switch(token_type[(int)c]) {
 	case NUMBER:
-		value = 0;
-		value = c - '0';
+		buf[i++] = c;
 		for(src += index; *src != '\0'; src++, index++) {
 			if(token_type[(int)*src] != NUMBER) {
 				break;
 			}
-			value = value * 10 + (*src - '0');
+			buf[i++] = *src;
 		}
+		buf[i] = '\0';
+		d_value = atof(buf);
 		if(f_func != 0) {
 			switch(f_func) {
 			case (SIN):
 				// degree to radian
-				value = (int)sin((double)(value * M_PI / 180.0));
+				d_value = sin(d_value * M_PI / 180.0);
 				break;
 			case (COS):
-				value = (int)cos((double)(value * M_PI / 180.0));
+				d_value = cos(d_value * M_PI / 180.0);
 				break;
 			case (TAN):
-				value = (int)tan((double)(value * M_PI / 180.0));
+				d_value = tan(d_value * M_PI / 180.0);
+				break;
+			case UNKNOWN:
+				fprintf(stderr, "Unknown word\n");
 				break;
 			}
 			f_func = VALUE; // flag clear
@@ -134,7 +143,8 @@ int get_next_token(char *src, int *val)
 		ret = 3; // SPLIT
 		break;
 	case SYMBOL:
-		for( ; *src != '\0'; src++, index++) {
+		buf[i++] = c;
+		for(src += index; *src != '\0'; src++, index++) {
 			if(token_type[(int)*src] != SYMBOL) {
 				break;
 			}
@@ -150,6 +160,7 @@ int get_next_token(char *src, int *val)
 		break;
 	}
 	*val = value;
+	*d_val = d_value;
 	return ret;
 }
 
@@ -199,9 +210,7 @@ int init_token_type(void)
 	token_type[','] = SPLIT;
 	*/
 	token_type['-'] = OPERATOR;
-	/*
-	token_type['.'] = OPERATOR;
-	*/
+	token_type['.'] = NUMBER;
 	token_type['/'] = OPERATOR;
 	/*
 	token_type['@'] = OPERATOR;
@@ -248,17 +257,18 @@ int to_RPN(char *src) {
 	int top;
 	int type;
 	int value;
+	double d_value;
 
 	init_stack();
 
 	strncpy(buf0, src, sizeof(buf0));
 	for( ;; ) {
-		type = get_next_token(buf0, &value);
+		type = get_next_token(buf0, &value, &d_value);
 		switch(type) {
 		case 0: // End of String
 			goto end_of_formula;
 		case 1: // NUMBER
-			append_value(value);
+			append_value(d_value);
 			break;
 		case 2: // OPERATOR
 		case 3: // SPLIT
@@ -311,59 +321,64 @@ end_of_formula:
 	return 0;
 }
 
-int calc_RPN(void)
+double calc_RPN(void)
 {
-	int ret, data;
-	int i, j;
+	int ret;
+	double i, j;
+	double data;
+	double stack2[100];
+	int index = 0;
 
-	init_stack();
 	for(;;) {
 		ret = get_formula(&data);
 		if(ret == 1) {
-			push(data);
+			stack2[index++] = data;
 		} else if(ret == 0) {
-			switch(data) {
+			switch((int)data) {
 			case '+':
-				pop(&j);
-				pop(&i);
-				push(i + j);
+				j = stack2[--index];
+				i = stack2[--index];
+				stack2[index++] = i + j;
 				break;
 			case '-':
-				pop(&j);
-				pop(&i);
-				push(i - j);
+				j = stack2[--index];
+				i = stack2[--index];
+				stack2[index++] = i - j;
 				break;
 			case '*':
-				pop(&j);
-				pop(&i);
-				push(i * j);
+				j = stack2[--index];
+				i = stack2[--index];
+				stack2[index++] = i * j;
 				break;
 			case '/':
-				pop(&j);
-				pop(&i);
-				push(i / j);
+				j = stack2[--index];
+				i = stack2[--index];
+				if(j == 0) {
+					fprintf(stderr, "Division error\n");
+					return -1;
+				}
+				stack2[index++] = i / j;
 				break;
 			}
 		} else if(ret == -1) {
 			break;
 		}
 	}
-	pop(&ret);
-	term_stack();
-	return ret;
+	i = stack2[--index];
+	return i;
 }
 
 int calc(void)
 {
 	char buf[1024];
-	int ret;
+	double ret;
 
 	init_token_type();
 	printf("> ");
-	input_formula(buf, sizeof(buf));
+	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	to_RPN(buf);
 	ret = calc_RPN();
-	printf("%d\n", ret);
+	printf("%0lf\n", ret);
 
 	return 0;
 }
