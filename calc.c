@@ -73,11 +73,11 @@ int symbol_to_value(char *str)
 	if(!strcmp(str, "quit")) {
 		exit(0);
 	} else if(!strcmp(str, "sin")) {
-		ret = 1 << SIN;
+		ret = SIN;
 	} else if(!strcmp(str, "cos")) {
-		ret = 1 << COS;
+		ret = COS;
 	} else if(!strcmp(str, "tan")) {
-		ret = 1 << TAN;
+		ret = TAN;
 	}
 	return ret;
 }
@@ -110,14 +110,14 @@ int get_next_token(char *src, int *val)
 		}
 		if(f_func != 0) {
 			switch(f_func) {
-			case (1 << SIN):
+			case (SIN):
 				// degree to radian
 				value = (int)sin((double)(value * M_PI / 180.0));
 				break;
-			case (1 << COS):
+			case (COS):
 				value = (int)cos((double)(value * M_PI / 180.0));
 				break;
-			case (1 << TAN):
+			case (TAN):
 				value = (int)tan((double)(value * M_PI / 180.0));
 				break;
 			}
