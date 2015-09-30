@@ -17,7 +17,7 @@ int append_formula(int type, int data)
 {
 	struct t_formula *p;
 	p = (struct t_formula *)malloc(sizeof(struct t_formula));
-	if(!p) exit(0);
+	if(!p) return -1; /* memory allocate error */
 	if(start_formula == NULL) {
 		start_formula = p;
 		end_formula = p;

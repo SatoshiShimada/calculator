@@ -16,10 +16,15 @@ int main(int argc, char *argv[])
 
 int input_formula(char *formula_str, int str_size)
 {
-	char buf0[1024];
-	char buf1[1024];
+	char *buf0, buf1;
 	char *str;
 	int i;
+	const int buf_size = 1024;
+
+	buf0 = (char *)malloc(buf_size);
+	if(!buf0) return -1;
+	buf1 = (char *)malloc(buf_size);
+	if(!buf1) return -1;
 
 	fgets(buf0, sizeof(buf0), stdin);
 	for(str = buf0; *str != '\0'; str++) {
@@ -34,6 +39,9 @@ int input_formula(char *formula_str, int str_size)
 	}
 	buf1[i] = '\0';
 	strncpy(formula_str, buf1, str_size);
+
+	free(buf0);
+	free(buf1);
 
 	return 0;
 }

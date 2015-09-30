@@ -35,6 +35,7 @@ int push(int value)
 {
 	STACK_DATA *p;
 	p = (STACK_DATA *)malloc(sizeof(STACK_DATA));
+	if(!p) return -1; /* memory allocate error */
 	if(start == NULL) {
 		start = p;
 		p->prev = NULL;
