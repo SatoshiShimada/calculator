@@ -17,6 +17,11 @@ enum func_num {
 	SIN = 1,
 	COS,
 	TAN,
+	SQRT,
+	EXP,
+	LOG,
+	LOG10,
+	ABS,
 	PLUS = '+',
 	MINUS = '-',
 	MUL = '*',
@@ -84,6 +89,14 @@ int symbol_to_value(char *str)
 		ret = COS;
 	} else if(!strcmp(str, "tan")) {
 		ret = TAN;
+	} else if(!strcmp(str, "sqrt")) {
+		ret = SQRT;
+	} else if(!strcmp(str, "exp")) {
+		ret = EXP;
+	} else if(!strcmp(str, "log")) {
+		ret = LOG;
+	} else if(!strcmp(str, "abs")) {
+		ret = ABS;
 	} else {
 		ret = UNKNOWN;
 	}
@@ -200,6 +213,10 @@ int order(int ch)
 	case SIN:
 	case COS:
 	case TAN:
+	case SQRT:
+	case EXP:
+	case LOG:
+	case ABS:
 		return 4;
 	case '*':
 	case '/':
@@ -339,6 +356,22 @@ double calc_RPN(void)
 					i = i * M_PI / 180.0;
 				}
 				stack2[index++] = tan(i);
+				break;
+			case SQRT:
+				i = stack2[--index];
+				stack2[index++] = sqrt(i);
+				break;
+			case EXP:
+				i = stack2[--index];
+				stack2[index++] = exp(i);
+				break;
+			case LOG:
+				i = stack2[--index];
+				stack2[index++] = log(i);
+				break;
+			case ABS:
+				i = stack2[--index];
+				stack2[index++] = abs(i);
 			}
 		} else if(ret == -1) {
 			break;
