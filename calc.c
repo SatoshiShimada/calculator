@@ -17,6 +17,10 @@ enum func_num {
 	SIN = 1,
 	COS,
 	TAN,
+	PLUS = '+',
+	MINUS = '-',
+	MUL = '*',
+	DIV = '*',
 	UNKNOWN = 100,
 } FUNC_NUM;
 
@@ -34,6 +38,7 @@ typedef enum {
 } Token_type;
 
 char token_type[0xff];
+int  f_use_degree = 1; // default use degree (not use radian)
 
 int input_formula(char *formula_str, int str_size)
 {
@@ -93,7 +98,6 @@ int get_next_token(char *src, int *val, double *d_val)
 	char buf[1024];
 	int value, ret, i;
 	double d_value;
-	static int f_func = 0;
 
 	buf[0] = '\0';
 	i = 0;
@@ -114,24 +118,6 @@ int get_next_token(char *src, int *val, double *d_val)
 		}
 		buf[i] = '\0';
 		d_value = atof(buf);
-		if(f_func != 0) {
-			switch(f_func) {
-			case (SIN):
-				// degree to radian
-				d_value = sin(d_value * M_PI / 180.0);
-				break;
-			case (COS):
-				d_value = cos(d_value * M_PI / 180.0);
-				break;
-			case (TAN):
-				d_value = tan(d_value * M_PI / 180.0);
-				break;
-			case UNKNOWN:
-				fprintf(stderr, "Unknown word\n");
-				break;
-			}
-			f_func = VALUE; // flag clear
-		}
 		ret = 1; // NUMBER
 		break;
 	case OPERATOR:
@@ -151,7 +137,7 @@ int get_next_token(char *src, int *val, double *d_val)
 			buf[i++] = *src;
 		}
 		buf[i] = '\0';
-		f_func = symbol_to_value(buf);
+		value = symbol_to_value(buf);
 		ret = 4;
 		break;
 	default:
@@ -194,42 +180,13 @@ int init_token_type(void)
 	token_type['\r'] = SPACE;
 	token_type['\t'] = SPACE;
 
-	/*
-	token_type['!'] = OPERATOR;
-	token_type['\"'] = OPERATOR;
-	token_type['#'] = OPERATOR;
-	token_type['%'] = OPERATOR;
-	token_type['&'] = OPERATOR;
-	token_type['\''] = OPERATOR;
-	*/
 	token_type['('] = SPLIT;
 	token_type[')'] = SPLIT;
 	token_type['*'] = OPERATOR;
 	token_type['+'] = OPERATOR;
-	/*
-	token_type[','] = SPLIT;
-	*/
 	token_type['-'] = OPERATOR;
 	token_type['.'] = NUMBER;
 	token_type['/'] = OPERATOR;
-	/*
-	token_type['@'] = OPERATOR;
-	token_type['['] = SPLIT;
-	token_type[']'] = SPLIT;
-	token_type['{'] = SPLIT;
-	token_type['}'] = SPLIT;
-	token_type['\\'] = OPERATOR;
-	token_type['^'] = OPERATOR;
-	token_type['`'] = OPERATOR;
-	token_type['|'] = OPERATOR;
-	token_type['~'] = OPERATOR;
-	token_type['<'] = OPERATOR;
-	token_type['>'] = OPERATOR;
-	token_type[':'] = SPLIT;
-	token_type[';'] = SPLIT;
-	token_type['='] = OPERATOR;
-	token_type['?'] = OPERATOR;
-	*/
 	token_type[0] = END_OF_FILE;
 
 	f_init_type = 1;
@@ -240,6 +197,10 @@ int init_token_type(void)
 int order(int ch)
 {
 	switch(ch) {
+	case SIN:
+	case COS:
+	case TAN:
+		return 4;
 	case '*':
 	case '/':
 		return 3;
@@ -272,6 +233,7 @@ int to_RPN(char *src) {
 			break;
 		case 2: // OPERATOR
 		case 3: // SPLIT
+		case 4: // SYMBOL
 			if(pop(&top)) {
 				/* empty stack */
 				if(value == ')') {
@@ -300,8 +262,6 @@ int to_RPN(char *src) {
 			end_loop:
 				push(value);
 			}
-			break;
-		case 4:
 			break;
 		default:
 			break;
@@ -359,6 +319,26 @@ double calc_RPN(void)
 				}
 				stack2[index++] = i / j;
 				break;
+			case SIN:
+				i = stack2[--index];
+				if(f_use_degree) {
+					i = i * M_PI / 180.0;
+				}
+				stack2[index++] = sin(i);
+				break;
+			case COS:
+				i = stack2[--index];
+				if(f_use_degree) {
+					i = i * M_PI / 180.0;
+				}
+				stack2[index++] = cos(i);
+				break;
+			case TAN:
+				i = stack2[--index];
+				if(f_use_degree) {
+					i = i * M_PI / 180.0;
+				}
+				stack2[index++] = tan(i);
 			}
 		} else if(ret == -1) {
 			break;
