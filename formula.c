@@ -49,3 +49,14 @@ int get_formula(double *data)
 	return ret;
 }
 
+int peek_formula(double *data)
+{
+	strcut t_formula *p;
+	int ret;
+	if(start_formula == NULL) return -1;
+	p = start_formula->next;
+	*data = start_formula->data;
+	ret = start_formula->type;
+	return ret;
+}
+

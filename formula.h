@@ -7,5 +7,6 @@
 
 int append_formula(int, double);
 int get_formula(double *);
+int peek_formula(double *);
 
 #endif // __FORMULA_H__
