@@ -27,6 +27,7 @@ enum func_num {
 	MUL = '*',
 	DIV = '*',
 	UNKNOWN = 100,
+	NO_FUNC,
 } FUNC_NUM;
 
 typedef enum {
@@ -97,6 +98,9 @@ int symbol_to_value(char *str)
 		ret = LOG;
 	} else if(!strcmp(str, "abs")) {
 		ret = ABS;
+	} else if(!strcmp(str, "help")) {
+		show_usage();
+		ret = UNKNOWN;
 	} else {
 		ret = UNKNOWN;
 	}
@@ -372,6 +376,9 @@ double calc_RPN(void)
 			case ABS:
 				i = stack2[--index];
 				stack2[index++] = abs(i);
+				break;
+			case NO_FUNC:
+				break;
 			}
 		} else if(ret == -1) {
 			break;
@@ -393,6 +400,19 @@ int calc(void)
 	ret = calc_RPN();
 	printf("%0lf\n", ret);
 
+	return 0;
+}
+
+int show_usage(void)
+{
+	printf("This command is calculator with one line formula.\n");
+	printf("Input Example:\n");
+	printf("\t10 + 5\n");
+	printf("\t10+5\n");
+	printf("\t3*(4+6)-7\n");
+	printf("\tsin(45+30) + cos45 + tan(90 / (4 - 2))\n");
+	printf("Exit ways:\n");
+	printf("\tquit or quit()\n");
 	return 0;
 }
 
