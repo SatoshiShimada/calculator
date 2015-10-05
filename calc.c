@@ -392,13 +392,19 @@ int calc(void)
 {
 	char buf[1024];
 	double ret;
+	int tmp;
 
 	init_token_type();
 	printf("> ");
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
-	printf("%0lf\n", ret);
+	/* real number or natural number */
+	tmp = (int)ret;
+	if(ret == (double)tmp)
+		printf("%d\n", (int)ret);
+	else
+		printf("%lf\n", ret);
 
 	return 0;
 }
