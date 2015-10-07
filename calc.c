@@ -14,7 +14,7 @@
 
 enum func_num {
 	VALUE = 0,
-	SIN = 1,
+	SIN,
 	COS,
 	TAN,
 	SQRT,
@@ -45,6 +45,9 @@ typedef enum {
 
 char token_type[0xff];
 int  f_use_degree = 1; // default use degree (not use radian)
+char variable_table[100][100];
+double variable_value[100];
+int variable_index;
 
 int input_formula(char *formula_str, int str_size)
 {
@@ -78,34 +81,72 @@ int input_formula(char *formula_str, int str_size)
 	return 0;
 }
 
-int symbol_to_value(char *str)
+int append_variable_value(char *name, double value)
 {
-	int ret;
+	int i;
 
+	for(i = 0; i < variable_index; i++) {
+		if(!strcmp(variable_table[i], name)) {
+			goto Label1;
+		}
+	}
+	i = variable_index;
+	variable_index++;
+	if(variable_index > 100) {
+		fprintf(stderr, "variable count too many\n");
+		return 0;
+	}
+	strcpy(variable_table[i], name);
+Label1:
+	variable_value[i] = value;
+
+	return 0;
+}
+
+double get_variable_value(char *name)
+{
+	double ret;
+	int i;
+
+	for(i = 0; i < variable_index; i++) {
+		if(!strcmp(variable_table[i], name)) {
+			ret = variable_value[i];
+			return ret;
+		}
+	}
+	fprintf(stderr, "Error: unknown variable name [%s]\n", name);
+	return 0.0;
+}
+
+int symbol_to_value(char *str, int *ret, double *value)
+{
 	if(!strcmp(str, "quit")) {
 		exit(0);
 	} else if(!strcmp(str, "sin")) {
-		ret = SIN;
+		*ret = SIN;
 	} else if(!strcmp(str, "cos")) {
-		ret = COS;
+		*ret = COS;
 	} else if(!strcmp(str, "tan")) {
-		ret = TAN;
+		*ret = TAN;
 	} else if(!strcmp(str, "sqrt")) {
-		ret = SQRT;
+		*ret = SQRT;
 	} else if(!strcmp(str, "exp")) {
-		ret = EXP;
+		*ret = EXP;
 	} else if(!strcmp(str, "log")) {
-		ret = LOG;
+		*ret = LOG;
 	} else if(!strcmp(str, "abs")) {
-		ret = ABS;
+		*ret = ABS;
 	} else if(!strcmp(str, "help")) {
 		show_usage();
-		ret = UNKNOWN;
+		*ret = UNKNOWN;
+	} else if(!strncmp(str, "$", 1)) {
+		*value = get_variable_value(str + 1);
+		return 2; // number
 	} else {
-		ret = UNKNOWN;
+		*ret = UNKNOWN;
 	}
 
-	return ret;
+	return 1; // symbol
 }
 
 int get_next_token(char *src, int *val, double *d_val)
@@ -114,6 +155,7 @@ int get_next_token(char *src, int *val, double *d_val)
 	char c;
 	char buf[1024];
 	int value, ret, i;
+	int type;
 	double d_value;
 
 	buf[0] = '\0';
@@ -154,8 +196,11 @@ int get_next_token(char *src, int *val, double *d_val)
 			buf[i++] = *src;
 		}
 		buf[i] = '\0';
-		value = symbol_to_value(buf);
-		ret = 4;
+		type = symbol_to_value(buf, &value, &d_value);
+		if(type == 1)
+			ret = 4; // symbol
+		else if(type == 2)
+			ret = 1; // number
 		break;
 	default:
 		fprintf(stderr, "Error: Unknown charactor [%c]\n", c);
@@ -244,6 +289,11 @@ int to_RPN(char *src) {
 	init_stack();
 
 	strncpy(buf0, src, sizeof(buf0));
+	if(!strncmp(buf0, "$", 1)) {
+		for(i = 0; buf[i] != '='; i++) {
+			
+		}
+	}
 	for( ;; ) {
 		type = get_next_token(buf0, &value, &d_value);
 		switch(type) {
