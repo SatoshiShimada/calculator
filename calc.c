@@ -158,7 +158,7 @@ int get_next_token(char *src, int *val, double *d_val)
 		ret = 4;
 		break;
 	default:
-		fprintf(stderr, "Unknown charactor [%c]\n", c);
+		fprintf(stderr, "Error: Unknown charactor [%c]\n", c);
 		ret = -1;
 		break;
 	}
@@ -258,7 +258,7 @@ int to_RPN(char *src) {
 			if(pop(&top)) {
 				/* empty stack */
 				if(value == ')') {
-					fprintf(stderr, "Invalid syntax\n");
+					fprintf(stderr, "Error: Invalid syntax\n");
 				}
 				push(value);
 			} else if(value == '(') {
@@ -272,7 +272,7 @@ int to_RPN(char *src) {
 				}
 			} else {
 				if(order(value) == -1) {
-					fprintf(stderr, "Syntax error\n");
+					fprintf(stderr, "Error: Syntax error\n");
 					break;
 				}
 				while(order(top) >= order(value)) {
@@ -292,7 +292,7 @@ end_of_formula:
 
 	while(!pop(&top)) {
 		if(top == '(') {
-			fprintf(stderr, "Invalid syntax\n");
+			fprintf(stderr, "Error: Invalid syntax\n");
 			return -1;
 		}
 		append_operator(top);
@@ -335,7 +335,7 @@ double calc_RPN(void)
 				j = stack2[--index];
 				i = stack2[--index];
 				if(j == 0) {
-					fprintf(stderr, "Division error\n");
+					fprintf(stderr, "Error: Division error\n");
 					return -1;
 				}
 				stack2[index++] = i / j;
@@ -419,7 +419,7 @@ int show_usage(void)
 	printf("\tsin(45+30) + cos45 + tan(90 / (4 - 2))\n");
 	printf("\t10.5*sin(2.5*100)\n");
 	printf("Exit ways:\n");
-	printf("\tquit or quit()\n");
+	printf("\tEnter 'quit' or 'quit()'\n");
 	return 0;
 }
 

@@ -11,11 +11,15 @@ int main(int argc, char *argv[])
 		   !strcmp(argv[1], "--help")) {
 			show_usage();
 			return 0;
+		} else {
+			goto unknown_option;
 		}
-	}
-	show_usage();
-	while(!calc()) {
-		;
+	} else if(argc == 1) {
+		show_usage();
+		while(!calc()) ;
+	} else {
+unknown_option:
+		fprintf(stderr, "Error: Unknown option [%s]\n", argv[1]);
 	}
 
 	return 0;
