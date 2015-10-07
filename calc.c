@@ -418,6 +418,7 @@ int calc_with_formula(int count, char *formula_data[])
 	buf[0] = '\0';
 
 	init_token_type();
+	for(tmp = 1; tmp < count; tmp++) {
 		strncat(buf, formula_data[tmp], sizeof(buf));
 	}
 	if(to_RPN(buf) == -1) return -1;
