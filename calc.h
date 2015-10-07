@@ -3,6 +3,7 @@
 #define __CALC_H__
 
 int calc(void);
+int calc_with_formula(int, char **);
 int input_formula(char *, int);
 int to_RPN(char *);
 double calc_RPN(void);

@@ -409,6 +409,29 @@ int calc(void)
 	return 0;
 }
 
+int calc_with_formula(int count, char *formula_data[])
+{
+	char buf[1024];
+	double ret;
+	int tmp;
+	
+	buf[0] = '\0';
+
+	init_token_type();
+		strncat(buf, formula_data[tmp], sizeof(buf));
+	}
+	if(to_RPN(buf) == -1) return -1;
+	ret = calc_RPN();
+	/* real number or natural number */
+	tmp = (int)ret;
+	if(ret == (double)tmp)
+		printf("%d\n", (int)ret);
+	else
+		printf("%lf\n", ret);
+
+	return 0;
+}
+	
 int show_usage(void)
 {
 	printf("This command is calculator with one line formula.\n");
