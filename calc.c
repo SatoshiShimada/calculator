@@ -48,6 +48,7 @@ int  f_use_degree = 1; // default use degree (not use radian)
 char variable_table[100][100];
 double variable_value[100];
 int variable_index;
+char variable_name[1024];
 
 int input_formula(char *formula_str, int str_size)
 {
@@ -235,6 +236,7 @@ int init_token_type(void)
 		token_type[i] = SYMBOL;
 	}
 
+	token_type['$'] = SYMBOL;
 	token_type['_'] = SYMBOL;
 
 	token_type[' '] = SPACE;
@@ -281,6 +283,8 @@ int order(int ch)
 
 int to_RPN(char *src) {
 	char buf0[1024];
+	int i;
+	int f;
 	int top;
 	int type;
 	int value;
@@ -289,9 +293,20 @@ int to_RPN(char *src) {
 	init_stack();
 
 	strncpy(buf0, src, sizeof(buf0));
-	if(!strncmp(buf0, "$", 1)) {
-		for(i = 0; buf[i] != '='; i++) {
-			
+	if(!strncmp(src, "$", 1)) {
+		f = 0;
+		for(i = 1; src[i] != '\0'; i++) {
+			if(src[i] == '=') f = 1;
+			if(f == 0) variable_name[i - 1] = src[i];
+			if(src[i] == '=') {
+				strncpy(buf0, src + i + 1, sizeof(buf0));
+				break;
+			}
+		}
+		if(f == 0) {
+			variable_name[0] = '\0';
+		} else {
+			variable_name[i - 1] = '\0';
 		}
 	}
 	for( ;; ) {
@@ -449,6 +464,9 @@ int calc(void)
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
+	if(variable_name[0] != '\0') {
+		append_variable_value(variable_name, ret);
+	}
 	/* real number or natural number */
 	tmp = (int)ret;
 	if(ret == (double)tmp)
