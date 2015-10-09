@@ -43,6 +43,18 @@ typedef enum {
 	SPLIT,
 } Token_type;
 
+/* functions */
+int  input_formula(char *, int);
+int  to_RPN(char *);
+double calc_RPN(void);
+int  get_next_token(char *, int *, double *);
+int  init_token_type(void);
+int  append_variable_value(char *, double);
+double get_variable_value(char *);
+int  symbol_to_value(char *, int *, double *);
+int  order(int);
+
+/* global variables */
 char token_type[0xff];
 int  f_use_degree = 1; // default use degree (not use radian)
 char variable_table[100][100];
