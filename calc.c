@@ -525,8 +525,8 @@ int show_usage(void)
 	printf("Input Example:\n");
 	printf("\t10 + 5\n");
 	printf("\t10+5\n");
-	printf("\t3*(4+6)-7\n");
-	printf("\tsin(45+30) + cos45 + tan(90 / (4 - 2))\n");
+	printf("\t$abc = 3*(4+6)-7\n");
+	printf("\t$abc + sin(45+30) + cos45 + tan(90 / (4 - 2))\n");
 	printf("\t10.5*sin(2.5*100)\n");
 	printf("Exit ways:\n");
 	printf("\tEnter 'quit' or 'quit()'\n");
