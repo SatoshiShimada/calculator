@@ -1,4 +1,14 @@
 
+/*
+ * Calculator by using Reverse Polish Notation.
+ *
+ * features:
+ *   Usable brackets, variable and functions.
+ *
+ * Author:
+ *   SatoshiShimada
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
