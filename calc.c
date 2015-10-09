@@ -44,23 +44,24 @@ typedef enum {
 } Token_type;
 
 /* functions */
-int  input_formula(char *, int);
-int  to_RPN(char *);
+int    input_formula(char *, int);
+int    to_RPN(char *);
 double calc_RPN(void);
-int  get_next_token(char *, int *, double *);
-int  init_token_type(void);
-int  append_variable_value(char *, double);
+int    get_next_token(char *, int *, double *);
+int    init_token_type(void);
+int    append_variable_value(char *, double);
 double get_variable_value(char *);
-int  symbol_to_value(char *, int *, double *);
-int  order(int);
+int    symbol_to_value(char *, int *, double *);
+int    order(int);
 
 /* global variables */
-char token_type[0xff];
-int  f_use_degree = 1; // default use degree (not use radian)
-char variable_table[100][100];
+char   token_type[0xff];
+int    f_use_degree = 1; // default use degree (not use radian)
+int    f_error = 0; // is error for calcurate
+char   variable_table[100][100];
 double variable_value[100];
-int variable_index;
-char variable_name[1024];
+int    variable_index;
+char   variable_name[1024];
 
 int input_formula(char *formula_str, int str_size)
 {
@@ -387,6 +388,7 @@ double calc_RPN(void)
 	double stack2[100];
 	int index = 0;
 
+	f_error = 0;
 	for(;;) {
 		ret = get_formula(&data);
 		if(ret == 1) {
@@ -412,7 +414,8 @@ double calc_RPN(void)
 				j = stack2[--index];
 				i = stack2[--index];
 				if(j == 0) {
-					fprintf(stderr, "Error: Division error\n");
+					fprintf(stderr, "Error: Division error\nDivision by zero\n");
+					f_error = 1;
 					return -1;
 				}
 				stack2[index++] = i / j;
@@ -476,6 +479,7 @@ int calc(void)
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
+	if(f_error) return 0;
 	append_variable_value("prev", ret);
 	if(variable_name[0] != '\0') {
 		append_variable_value(variable_name, ret);
@@ -504,6 +508,7 @@ int calc_with_formula(int count, char *formula_data[])
 	}
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
+	if(f_error) return 0;
 	/* real number or natural number */
 	tmp = (int)ret;
 	if(ret == (double)tmp)
