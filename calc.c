@@ -464,6 +464,7 @@ int calc(void)
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
+	append_variable_value("prev", ret);
 	if(variable_name[0] != '\0') {
 		append_variable_value(variable_name, ret);
 	}
