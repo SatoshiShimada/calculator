@@ -572,6 +572,26 @@ int show_usage(void)
 
 int list_of_functions(void)
 {
+	printf(
+		"trigonometric function:\n"
+		"\tsin: sine\n"
+		"\tcos: cosine\n"
+		"\ttan: tangent\n"
+		"inverse trigonometric function:\n"
+		"\tasin: inverse sine\n"
+		"\tacos: inverse cosine\n"
+		"\tatan: inverse tangent\n"
+		"hyperbolic function:\n"
+		"\tsinh: hyperbolic sine\n"
+		"\tcosh: hyperbolic cosine\n"
+		"\ttanh: hyperbolic tanjent\n"
+		"\n"
+		"\tsqrt: square root\n"
+		"\texp: exponential function\n"
+		"\tlog: common logarithm\n"
+		"\tln: natural logarithm\n"
+		"\tabs: absolute value\n"
+	);
 	return 0;
 }
 
