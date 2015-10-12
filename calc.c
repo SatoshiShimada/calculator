@@ -27,10 +27,16 @@ enum func_num {
 	SIN,
 	COS,
 	TAN,
+	ASIN,
+	ACOS,
+	ATAN,
+	SINH,
+	COSH,
+	TANH,
 	SQRT,
 	EXP,
 	LOG,
-	LOG10,
+	LN,
 	ABS,
 	PLUS = '+',
 	MINUS = '-',
@@ -152,12 +158,26 @@ int symbol_to_value(char *str, int *ret, double *value)
 		*ret = COS;
 	} else if(!strcmp(str, "tan")) {
 		*ret = TAN;
+	} else if(!strcmp(str, "asin")) {
+		*ret = ASIN;
+	} else if(!strcmp(str, "acos")) {
+		*ret = ACOS;
+	} else if(!strcmp(str, "atan")) {
+		*ret = ATAN;
+	} else if(!strcmp(str, "sinh")) {
+		*ret = SINH;
+	} else if(!strcmp(str, "cosh")) {
+		*ret = COSH;
+	} else if(!strcmp(str, "tanh")) {
+		*ret = TANH;
 	} else if(!strcmp(str, "sqrt")) {
 		*ret = SQRT;
 	} else if(!strcmp(str, "exp")) {
 		*ret = EXP;
 	} else if(!strcmp(str, "log")) {
 		*ret = LOG;
+	} else if(!strcmp(str, "ln")) {
+		*ret = LN;
 	} else if(!strcmp(str, "abs")) {
 		*ret = ABS;
 	} else if(!strcmp(str, "help")) {
@@ -287,9 +307,16 @@ int order(int ch)
 	case SIN:
 	case COS:
 	case TAN:
+	case ACOS:
+	case ASIN:
+	case ATAN:
+	case SINH:
+	case COSH:
+	case TANH:
 	case SQRT:
 	case EXP:
 	case LOG:
+	case LN:
 	case ABS:
 		return 4;
 	case '*':
@@ -540,6 +567,11 @@ int show_usage(void)
 	printf("\t10.5*sin(2.5*100)\n");
 	printf("Exit ways:\n");
 	printf("\tEnter 'quit' or 'quit()'\n");
+	return 0;
+}
+
+int list_of_functions(void)
+{
 	return 0;
 }
 

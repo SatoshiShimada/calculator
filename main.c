@@ -12,6 +12,9 @@ int main(int argc, char *argv[])
 			/* help option */
 			show_usage();
 			return 0;
+		} else if(!strcmp(argv[1], "-l") ||
+		          !strcmp(argv[1], "--list")) {
+			list_of_functions();
 		} else {
 			/* unknown option */
 			goto unknown_option;
