@@ -79,6 +79,15 @@ double variable_value[100];
 int    variable_index;
 char   variable_name[1024];
 
+int set_angle_unit(int unit)
+{
+	if(unit == DEGREE)
+		f_use_degree = 1;
+	else
+		f_use_degree = 0;
+	return 0;
+}
+
 double radian_to_degree(double value)
 {
 	return (value * M_PI / 180.0);
@@ -191,6 +200,13 @@ int symbol_to_value(char *str, int *ret, double *value)
 	} else if(!strcmp(str, "list")) {
 		list_of_functions();
 		*ret = UNKNOWN;
+	} else if(!strcmp(str, "degree")) {
+		set_angle_unit(DEGREE);
+	} else if(!strcmp(str, "radian")) {
+		set_angle_unit(RADIAN);
+	} else if(!strcmp(str, "pi") || !strcmp(str, "PI")) {
+		*value = M_PI;
+		return 2; // number
 	} else if(!strncmp(str, "$", 1)) {
 		*value = get_variable_value(str + 1);
 		return 2; // number

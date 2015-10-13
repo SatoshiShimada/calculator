@@ -15,11 +15,20 @@ int main(int argc, char *argv[])
 		} else if(!strcmp(argv[1], "-l") ||
 		          !strcmp(argv[1], "--list")) {
 			list_of_functions();
+		} else if(!strcmp(argv[1], "-r") ||
+		          !strcmp(argv[1], "--radian")) {
+			set_angle_unit(RADIAN);
+			goto calculate;
+		} else if(!strcmp(argv[1], "-d") ||
+		          !strcmp(argv[1], "--degree")) {
+			set_angle_unit(DEGREE);
+			goto calculate;
 		} else {
 			/* unknown option */
 			goto unknown_option;
 		}
 	} else if(argc == 1) {
+calculate:
 		show_usage();
 		while(!calc()) ;
 	} else if(argc > 2) {
