@@ -79,6 +79,11 @@ double variable_value[100];
 int    variable_index;
 char   variable_name[1024];
 
+double radian_to_degree(double value)
+{
+	return (value * M_PI / 180.0);
+}
+
 int input_formula(char *formula_str, int str_size)
 {
 	char *buf0, *buf1;
@@ -182,6 +187,9 @@ int symbol_to_value(char *str, int *ret, double *value)
 		*ret = ABS;
 	} else if(!strcmp(str, "help")) {
 		show_usage();
+		*ret = UNKNOWN;
+	} else if(!strcmp(str, "list")) {
+		list_of_functions();
 		*ret = UNKNOWN;
 	} else if(!strncmp(str, "$", 1)) {
 		*value = get_variable_value(str + 1);
@@ -459,24 +467,48 @@ double calc_RPN(void)
 				break;
 			case SIN:
 				i = stack2[--index];
-				if(f_use_degree) {
-					i = i * M_PI / 180.0;
-				}
+				if(f_use_degree)  i = radian_to_degree(i);
 				stack2[index++] = sin(i);
 				break;
 			case COS:
 				i = stack2[--index];
-				if(f_use_degree) {
-					i = i * M_PI / 180.0;
-				}
+				if(f_use_degree)  i = radian_to_degree(i);
 				stack2[index++] = cos(i);
 				break;
 			case TAN:
 				i = stack2[--index];
-				if(f_use_degree) {
-					i = i * M_PI / 180.0;
-				}
+				if(f_use_degree)  i = radian_to_degree(i);
 				stack2[index++] = tan(i);
+				break;
+			case ASIN:
+				i = stack2[--index];
+				if(f_use_degree)  i = radian_to_degree(i);
+				stack2[index++] = asin(i);
+				break;
+			case ACOS:
+				i = stack2[--index];
+				if(f_use_degree)  i = radian_to_degree(i);
+				stack2[index++] = acos(i);
+				break;
+			case ATAN:
+				i = stack2[--index];
+				if(f_use_degree)  i = radian_to_degree(i);
+				stack2[index++] = atan(i);
+				break;
+			case SINH:
+				i = stack2[--index];
+				if(f_use_degree)  i = radian_to_degree(i);
+				stack2[index++] = sinh(i);
+				break;
+			case COSH:
+				i = stack2[--index];
+				if(f_use_degree)  i = radian_to_degree(i);
+				stack2[index++] = cosh(i);
+				break;
+			case TANH:
+				i = stack2[--index];
+				if(f_use_degree)  i = radian_to_degree(i);
+				stack2[index++] = tanh(i);
 				break;
 			case SQRT:
 				i = stack2[--index];
@@ -487,6 +519,10 @@ double calc_RPN(void)
 				stack2[index++] = exp(i);
 				break;
 			case LOG:
+				i = stack2[--index];
+				stack2[index++] = log10(i);
+				break;
+			case LN:
 				i = stack2[--index];
 				stack2[index++] = log(i);
 				break;
@@ -567,6 +603,9 @@ int show_usage(void)
 	printf("\t10.5*sin(2.5*100)\n");
 	printf("Exit ways:\n");
 	printf("\tEnter 'quit' or 'quit()'\n");
+	printf("Help:\n");
+	printf("\thelp: show this message\n");
+	printf("\tlist: list of function\n");
 	return 0;
 }
 

@@ -4,11 +4,11 @@ CFLAGS=-Wall
 
 LINK=-lm
 
-SRCFILE=main.c calc.c stack.c formula.c
+OBJFILE=main.o calc.o stack.o formula.o
 EXEFILE=calc
 
-default: calc.c stack.c formula.c
-	$(CC) $(CFLAGS) $(SRCFILE) -o $(EXEFILE) $(LINK)
+all: $(OBJFILE)
+	$(CC) $(CFLAGS) $(OBJFILE) -o $(EXEFILE) $(LINK)
 
 clean:
 	rm -f *.o
