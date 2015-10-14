@@ -564,7 +564,7 @@ int calc(void)
 	int tmp;
 
 	init_token_type();
-	printf("> ");
+	printf("> "); /* prompt */
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
