@@ -17,6 +17,7 @@
 #include "calc.h"
 #include "stack.h"
 #include "formula.h"
+#include "matrix.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793
@@ -200,6 +201,8 @@ int symbol_to_value(char *str, int *ret, double *value)
 	} else if(!strcmp(str, "list")) {
 		list_of_functions();
 		*ret = UNKNOWN;
+	} else if(!strcmp(str, "matrix")) {
+		matrix_mode();
 	} else if(!strcmp(str, "degree")) {
 		set_angle_unit(DEGREE);
 	} else if(!strcmp(str, "radian")) {
