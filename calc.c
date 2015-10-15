@@ -131,7 +131,7 @@ int append_variable_value(char *name, double value)
 
 	for(i = 0; i < variable_index; i++) {
 		if(!strcmp(variable_table[i], name)) {
-			goto Label1;
+			goto Label_already_used_name;
 		}
 	}
 	i = variable_index;
@@ -141,7 +141,7 @@ int append_variable_value(char *name, double value)
 		return 0;
 	}
 	strcpy(variable_table[i], name);
-Label1:
+Label_already_used_name:
 	variable_value[i] = value;
 
 	return 0;
@@ -294,6 +294,7 @@ int init_token_type(void)
 	for(i = '0'; i <= '9'; i++) {
 		token_type[i] = NUMBER;
 	}
+	token_type['.'] = NUMBER;
 
 	for(i = 'a'; i <= 'z'; i++) {
 		token_type[i] = SYMBOL;
@@ -316,8 +317,8 @@ int init_token_type(void)
 	token_type['*'] = OPERATOR;
 	token_type['+'] = OPERATOR;
 	token_type['-'] = OPERATOR;
-	token_type['.'] = NUMBER;
 	token_type['/'] = OPERATOR;
+	token_type['^'] = OPERATOR;
 	token_type[0] = END_OF_FILE;
 
 	f_init_type = 1;
@@ -342,6 +343,8 @@ int order(int ch)
 	case LOG:
 	case LN:
 	case ABS:
+		return 5;
+	case '^':
 		return 4;
 	case '*':
 	case '/':
@@ -480,6 +483,11 @@ double calc_RPN(void)
 					return -1;
 				}
 				stack2[index++] = i / j;
+				break;
+			case '^':
+				j = stack2[--index];
+				i = stack2[--index];
+				stack2[index++] = pow(i, j);
 				break;
 			case SIN:
 				i = stack2[--index];
