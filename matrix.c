@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "matrix.h"
 
@@ -11,13 +12,17 @@ int    show_matrix(Matrix);
 
 int matrix_mode(void)
 {
+	char buf[1024];
 	Matrix m;
+
 	m = input_matrix();
-	m = inverse_matrix(m);
-	printf("%d x %d\n"
-		   "%lf %lf\n%lf %lf\n",
-		   m.row, m.column,
-		   m.value[0], m.value[1], m.value[2], m.value[3]);
+
+	printf("inv: inverse matrix\n");
+	fgets(buf, sizeof(buf), stdin);
+	buf[strlen(buf) - 1] = '\0'; /* delete new line */
+	if(!strcmp(buf, "inv")) {
+		m = inverse_matrix(m);
+	}
 	show_matrix(m);
 	return 0;
 }
