@@ -17,6 +17,7 @@ int matrix_mode(void)
 
 	m = input_matrix();
 
+	printf("choose operation\n");
 	printf("inv: inverse matrix\n");
 	fgets(buf, sizeof(buf), stdin);
 	buf[strlen(buf) - 1] = '\0'; /* delete new line */
@@ -57,7 +58,9 @@ Matrix inverse_matrix(Matrix m)
 Matrix input_matrix(void)
 {
 	char buf[1024];
+	char *c, *split;
 	int i, j;
+	int count;
 	Matrix m;
 
 	printf("Enter row of matrix\n");
@@ -71,10 +74,15 @@ Matrix input_matrix(void)
 		return m;
 	}
 	j = 0;
-	for(i = 0; i < m.row * m.column; i++) {
-		printf("Enter %d row\n", i);
+	for(i = 0; i < m.row; i++) {
+		printf("Enter %d row. (split space)\n", i);
 		fgets(buf, sizeof(buf), stdin);
-		m.value[j++] = atof(buf);
+		split = buf;
+		for(count = 0; count < m.column; count++) {
+			m.value[j++] = atof(split);
+			c = strchr(split, ' ');
+			split = c;
+		}
 	}
 
 	return m;
