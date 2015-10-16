@@ -622,6 +622,8 @@ int calc_with_formula(int count, char *formula_data[])
 int show_usage(void)
 {
 	printf("This command is calculator with one line formula.\n");
+	printf("Change mode:\n");
+	printf("\tmatrix: matrix mode\n");
 	printf("Input Example:\n");
 	printf("\t10 + 5\n");
 	printf("\t10+5\n");

@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
 		}
 	} else if(argc == 1) {
 calculate:
-		show_usage();
+		//show_usage();
+		printf("show help: enter \'help\'\n");
 		while(!calc()) ;
 	} else if(argc > 2) {
 		calc_with_formula(argc, argv);
