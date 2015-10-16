@@ -203,10 +203,15 @@ int symbol_to_value(char *str, int *ret, double *value)
 		*ret = UNKNOWN;
 	} else if(!strcmp(str, "matrix")) {
 		matrix_mode();
+		*ret = UNKNOWN;
 	} else if(!strcmp(str, "degree")) {
 		set_angle_unit(DEGREE);
+		printf("degree mode\n");
+		*ret = UNKNOWN;
 	} else if(!strcmp(str, "radian")) {
 		set_angle_unit(RADIAN);
+		printf("radian mode\n");
+		*ret = UNKNOWN;
 	} else if(!strcmp(str, "pi") || !strcmp(str, "PI")) {
 		*value = M_PI;
 		return 2; // number
