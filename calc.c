@@ -70,6 +70,7 @@ int    append_variable_value(char *, double);
 double get_variable_value(char *);
 int    symbol_to_value(char *, int *, double *);
 int    order(int);
+int    print_style(double);
 
 /* global variables */
 char   token_type[0xff];
@@ -590,11 +591,7 @@ int calc(void)
 		append_variable_value(variable_name, ret);
 	}
 	/* real number or natural number */
-	tmp = (int)ret;
-	if(ret == (double)tmp)
-		printf("%d\n", (int)ret);
-	else
-		printf("%lf\n", ret);
+	print_style(ret);
 
 	return 0;
 }
@@ -665,6 +662,21 @@ int list_of_functions(void)
 		"\tln: natural logarithm\n"
 		"\tabs: absolute value\n"
 	);
+	return 0;
+}
+
+int printf_style(double value)
+{
+	int i;
+	char buf[1024];
+
+	sprintf(buf, "%lf", value);
+	for(i = strlen(buf) - 1; i > buf; i--) {
+		if(buf[i] == '0') buf[i] = '\0';
+		else break;
+	}
+	printf("%s\n", buf);
+
 	return 0;
 }
 
