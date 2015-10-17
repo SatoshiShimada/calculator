@@ -578,7 +578,6 @@ int calc(void)
 {
 	char buf[1024];
 	double ret;
-	int tmp;
 
 	init_token_type();
 	printf("> "); /* prompt */
@@ -600,23 +599,19 @@ int calc_with_formula(int count, char *formula_data[])
 {
 	char buf[1024];
 	double ret;
-	int tmp;
+	int i;
 	
 	buf[0] = '\0';
 
 	init_token_type();
-	for(tmp = 1; tmp < count; tmp++) {
-		strncat(buf, formula_data[tmp], sizeof(buf));
+	for(i = 1; i < count; i++) {
+		strncat(buf, formula_data[i], sizeof(buf));
 	}
 	if(to_RPN(buf) == -1) return -1;
 	ret = calc_RPN();
 	if(f_error) return 0;
 	/* real number or natural number */
-	tmp = (int)ret;
-	if(ret == (double)tmp)
-		printf("%d\n", (int)ret);
-	else
-		printf("%lf\n", ret);
+	print_style(ret);
 
 	return 0;
 }
@@ -665,15 +660,21 @@ int list_of_functions(void)
 	return 0;
 }
 
-int printf_style(double value)
+int print_style(double value)
 {
 	int i;
 	char buf[1024];
 
 	sprintf(buf, "%lf", value);
-	for(i = strlen(buf) - 1; i > buf; i--) {
-		if(buf[i] == '0') buf[i] = '\0';
-		else break;
+	for(i = strlen(buf) - 1; buf + i > buf; i--) {
+		if(buf[i] == '.') {
+			buf[i] = '\0';
+			break;
+		}
+		if(buf[i] == '0')
+			buf[i] = '\0';
+		else
+			break;
 	}
 	printf("%s\n", buf);
 
