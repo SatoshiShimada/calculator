@@ -20,7 +20,7 @@
 #include "matrix.h"
 
 #ifndef M_PI
-#define M_PI 3.141592653589793
+	#define M_PI 3.141592653589793
 #endif
 
 enum func_num {
@@ -76,6 +76,7 @@ int    print_style(double);
 char   token_type[0xff];
 int    f_use_degree = 1; // default use degree (not use radian)
 int    f_error = 0; // is error for calcurate
+int    f_was_calc = 1;
 char   variable_table[100][100];
 double variable_value[100];
 int    variable_index;
@@ -196,20 +197,25 @@ int symbol_to_value(char *str, int *ret, double *value)
 		*ret = LN;
 	} else if(!strcmp(str, "abs")) {
 		*ret = ABS;
-	} else if(!strcmp(str, "help")) {
+	} else if(!strcmp(str, "help") || !(strcmp(str, "?"))) {
+		f_was_calc = 0;
 		show_usage();
 		*ret = UNKNOWN;
 	} else if(!strcmp(str, "list")) {
+		f_was_calc = 0;
 		list_of_functions();
 		*ret = UNKNOWN;
 	} else if(!strcmp(str, "matrix")) {
+		f_was_calc = 0;
 		matrix_mode();
 		*ret = UNKNOWN;
 	} else if(!strcmp(str, "degree")) {
+		f_was_calc = 0;
 		set_angle_unit(DEGREE);
 		printf("degree mode\n");
 		*ret = UNKNOWN;
 	} else if(!strcmp(str, "radian")) {
+		f_was_calc = 0;
 		set_angle_unit(RADIAN);
 		printf("radian mode\n");
 		*ret = UNKNOWN;
@@ -220,6 +226,7 @@ int symbol_to_value(char *str, int *ret, double *value)
 		*value = get_variable_value(str + 1);
 		return 2; // number
 	} else {
+		f_was_calc = 0;
 		*ret = UNKNOWN;
 	}
 
@@ -315,6 +322,7 @@ int init_token_type(void)
 
 	token_type['$'] = SYMBOL;
 	token_type['_'] = SYMBOL;
+	token_type['?'] = SYMBOL;
 
 	token_type[' '] = SPACE;
 	token_type['\n'] = SPACE;
@@ -580,6 +588,7 @@ int calc(void)
 	double ret;
 
 	init_token_type();
+	f_was_calc = 1;
 	printf("> "); /* prompt */
 	if(input_formula(buf, sizeof(buf)) == -1) return -1;
 	if(to_RPN(buf) == -1) return -1;
@@ -590,7 +599,8 @@ int calc(void)
 		append_variable_value(variable_name, ret);
 	}
 	/* real number or natural number */
-	print_style(ret);
+	if(f_was_calc)
+		print_style(ret);
 
 	return 0;
 }
