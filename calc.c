@@ -519,6 +519,11 @@ double calc_RPN(void)
 			case TAN:
 				i = stack2[--index];
 				if(f_use_degree)  i = radian_to_degree(i);
+				if(i == (M_PI / 2)) {
+					fprintf(stderr, "Error: tan90(deg) not calculate!!\n");
+					f_was_calc = 0;
+					break;
+				}
 				stack2[index++] = tan(i);
 				break;
 			case ASIN:
@@ -553,6 +558,11 @@ double calc_RPN(void)
 				break;
 			case SQRT:
 				i = stack2[--index];
+				if(i < 0) {
+					fprintf(stderr, "Error: minus number is not calculate square root\n");
+					f_was_calc = 0;
+					break;
+				}
 				stack2[index++] = sqrt(i);
 				break;
 			case EXP:
@@ -561,10 +571,20 @@ double calc_RPN(void)
 				break;
 			case LOG:
 				i = stack2[--index];
+				if(i < 0) {
+					fprintf(stderr, "Error: minus number is not calculate common logarithm\n");
+					f_was_calc = 0;
+					break;
+				}
 				stack2[index++] = log10(i);
 				break;
 			case LN:
 				i = stack2[--index];
+				if(i < 0) {
+					fprintf(stderr, "Error: minus number is not calculate natural logarithm\n");
+					f_was_calc = 0;
+					break;
+				}
 				stack2[index++] = log(i);
 				break;
 			case ABS:
