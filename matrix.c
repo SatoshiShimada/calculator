@@ -75,13 +75,13 @@ Matrix input_matrix(void)
 	}
 	j = 0;
 	for(i = 0; i < m.row; i++) {
-		printf("Enter %d row. (split space)\n", i);
+		printf("Enter [%d/%d] row. (split space)\n", i, m.row);
 		fgets(buf, sizeof(buf), stdin);
 		split = buf;
 		for(count = 0; count < m.column; count++) {
 			m.value[j++] = atof(split);
 			c = strchr(split, ' ');
-			split = c;
+			split = c + 1;
 		}
 	}
 
