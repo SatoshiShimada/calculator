@@ -4,7 +4,7 @@ CFLAGS=-Wall
 
 LINK=-lm
 
-OBJFILE=main.o calc.o stack.o formula.o matrix.o
+OBJFILE=lecture_jp.c
 EXEFILE=calc
 
 all: $(OBJFILE)
