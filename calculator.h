@@ -9,6 +9,7 @@ int calc_with_formula(int, char **);
 int set_angle_unit(int);
 int show_usage(void);
 int list_of_functions(void);
+int mode_calculate(void);
 
 enum angle_type {
 	DEGREE,

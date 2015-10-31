@@ -27,6 +27,8 @@
 
 int main(int argc, char *argv[])
 {
+	char buf[1024];
+
 	if(argc == 2) {
 		if(!strcmp(argv[1], "-h") ||
 		   !strcmp(argv[1], "--help")) {
@@ -49,8 +51,26 @@ int main(int argc, char *argv[])
 		printf("show help: \'help\'\n");
 #else
 		printf("ヘルプを表示するには\'help\'と入力してください\n");
+select_mode:
+		printf("*********** モードを選択してください *************\n");
+		printf("* mode: 四則演算・関数電卓をモードで切り替えます *\n");
+		printf("* line: すべての計算を一行で入力します           *\n");
+		printf("**************************************************\n> \n");
 #endif // JAPANESE
+		fgets(buf, sizeof(buf), stdin);
+		if(!strcmp(buf, "mode\n")) {
+			printf("f: 関数モードに移行\n");
+			printf("a: 四則演算モードに移行\n");
+			printf("q: 終了\n");
+			printf("はじめに数字を入力してから式を入力してください\n");
+			printf("1<enter>+2<enter>*10<enter>のようにしてください\n");
+			mode_calculate();
+		} else if(!strcmp(buf, "line\n")) {
 			while(!calc());
+		} else {
+			printf("もう一度入力してください\n");
+			goto select_mode;
+		}
 	} else if(argc > 2) {
 		calc_with_formula(argc, argv);
 	} else {
@@ -921,6 +941,96 @@ int pop(int *value)
 		start = NULL;
 	}
 
+	return 0;
+}
+
+/* with mode */
+enum e_mode {
+	ARITHMETIC,
+	FUNCTION,
+} Mode;
+
+enum e_calc {
+	CALC,
+	NO_CALC,
+} Calc;
+
+int mode_calculate(void)
+{
+	int mode = ARITHMETIC;
+	int flag = CALC;
+	double f, g;
+	char c, func;
+
+	printf("数式を入力:\n");
+	scanf("%lf", &f);
+	for(;;) {
+		scanf(" %c", &c);
+		if(c == 'q') break;
+		if(mode == ARITHMETIC) {
+			if(c == 'f') {
+				mode = FUNCTION;
+				continue;
+			}
+			scanf("%lf", &g);
+			switch(c) {
+			case '+':
+				f = f + g;
+				break;
+			case '-':
+				f = f - g;
+				break;
+			case '*':
+				f = f * g;
+				break;
+			case '/':
+				if(g != 0)
+					f = f / g;
+				break;
+			default:
+				break;
+			}
+		} else if(mode == FUNCTION) {
+			if(c == 'a') {
+				mode = ARITHMETIC;
+				continue;
+			}
+			scanf(" %c", &func);
+			scanf("%lf", &g);
+			switch(func) {
+			case 's':
+				g = sin(radian_to_degree(g));
+				break;
+			case 'c':
+				g = cos(radian_to_degree(g));
+				break;
+			case 't':
+				g = tan(radian_to_degree(g));
+				break;
+			default:
+				break;
+			}
+			switch(c) {
+			case '+':
+				f = f + g;
+				break;
+			case '-':
+				f = f - g;
+				break;
+			case '*':
+				f = f * g;
+				break;
+			case '/':
+				if(g != 0)
+					f = f / g;
+				break;
+			default:
+				break;
+			}
+		}
+		if(flag == CALC)
+			print_style(f);
+	}
 	return 0;
 }
 
