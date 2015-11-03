@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 			return 0;
 		} else if(!strcmp(argv[1], "-l") ||
 				  !strcmp(argv[1], "--list")) {
-			  list_of_functions();
+			list_of_functions();
 		} else if(!strcmp(argv[1], "-r") ||
 				  !strcmp(argv[1], "--radian")) {
 			set_angle_unit(RADIAN);
