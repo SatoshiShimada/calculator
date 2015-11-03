@@ -55,7 +55,7 @@ select_mode:
 		printf("*********** モードを選択してください *************\n");
 		printf("* mode: 四則演算・関数電卓をモードで切り替えます *\n");
 		printf("* line: すべての計算を一行で入力します           *\n");
-		printf("**************************************************\n> \n");
+		printf("**************************************************\n> ");
 #endif // JAPANESE
 		fgets(buf, sizeof(buf), stdin);
 		if(!strcmp(buf, "mode\n")) {
@@ -66,6 +66,7 @@ select_mode:
 			printf("1<enter>+2<enter>*10<enter>のようにしてください\n");
 			mode_calculate();
 		} else if(!strcmp(buf, "line\n")) {
+			printf("数式を入力してください\n");
 			while(!calc());
 		} else {
 			printf("もう一度入力してください\n");
